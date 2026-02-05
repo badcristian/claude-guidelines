@@ -1,0 +1,54 @@
+claude notes:
+
+1. always annotate models with @property. Group them by type and if nullable. Place nullables at the bottom.
+2. always use  \Illuminate\Database\Eloquent\Casts\Attribute instead of regular function with Attributate at the end of the name.
+3. add custom query builder instead of scopes inside the model if there are more than 2 scopes
+	create a new scope inside the model or builder only if it has multiple conditions.
+	at the top of the builder define a doc like this:
+
+	put the builder inside the app/QueryBuilders folder
+	this is just an example of a builder for Company model.
+
+	use App\Domains\Companies\Models\Company;
+	use Illuminate\Database\Eloquent\Builder;
+	/**
+	 * Class CompanyQueryBuilder
+	 *
+	 * @mixin Company
+	 *
+	 * @template TModelClass of Company
+	 *
+	 * @extends Builder<TModelClass>
+	 */
+
+	inside the model connect the builder like this:
+	public function newEloquentBuilder($query): CompanyQueryBuilder
+	{
+	    return new CompanyQueryBuilder($query);
+	}
+
+4. always use facaded for services
+5. always use Enums for satuses, never regular strings. If the
+	if the enum has values connected to it like: badge colors, display value etc add them to the same enum so it can be reused
+6. always define relationships
+7. if it makes more sesnse just use $guarded = ['id'] instead of $fillable.
+8. if a method conains many db calls try to combine them into one query. For example statistics can be done often in one query usegin raw query methods.
+9. if a comment contains only one line do not add a new line after "/**" . Add start and end of the comment, 2 spaces between them and the comment in between. All in just one line. This coveres existing comments and new comments added dynamically
+10. When it make sense eager load relations. If laravel nova is used and makes more sense to add ti to the resource add it to the resource.
+11. when using constrained method inside migration always specify the table as a param
+12. A enum class should always end in 'Enum'. A resource should elways end on 'Resource' (in laavel nova for example). Same thing for nova action. This also applies to a new service etc.
+13. When implementing a new relatively big feature add a new log channell (driver daily) and use it like this: Lo::channel('new_channel')->....
+14. When retrieving attributes from the request always use ->input() method
+15. if there is a small login reapeted too many times consider adding a function to functions.php
+16. Use php attributes if the laravel version and php version allow that
+17. Suggest where attributes can be used in case some optimization can be added and it improves readability and code lenght.
+18. if the method params are long put each one on a separate line with the param name before it. If the param value is equal to the param default value dont include it. When param names are used some params can be omitted.
+19. use Variable Interpolation istead of dot or sprintf when possible
+20. add stack trace when logging an error: $e->getTraceAsString()
+21. always use ->getKey() instead of ->id
+22. Do not create methods that contains one line (a call to some other service). Just call that service multiple times. Do not add unnecessary code.
+23. Do not create methods that are used only one time. Better add short one line comment at the top of the code and add it there. Only create a separate method used once when there is a lot of logic or the logic is complex.
+24. If possible use only one return per method. (only if this doesn make the method hard to read)
+25. Only add comments at the top of methods if they clarify something important. No need to add it if the method name is self explanatory.
+26. Use defer to save not important stuff at the end of the request is needed.
+27. Only use cache when there are some amount of calculations. No need to cache one row or value from a table when it can just be retrieved.
